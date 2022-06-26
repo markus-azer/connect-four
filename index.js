@@ -6,6 +6,12 @@ const connectFourBuilder = (col, rows, startPlayer = 'o') => {
         gird.push(new Array(col).fill().map(()=>'.'))
     }
 
+    //memoization next to filled cell within col
+    const columnsNextCell = {}
+    for (let i = 0; i < col; i++) {
+        columnsNextCell[i] = 0
+    }
+
     //private variables and methods
     let finished = false
     let currentPlayer = startPlayer
@@ -39,15 +45,20 @@ const connectFourBuilder = (col, rows, startPlayer = 'o') => {
     return {
         add: (colNumber) => {
             if(finished) return {msg: `Game finished and player ${winnerPlayer} already won`, finished, winnerPlayer}
-            //todo add validation
-            let rowNumber
-            for (let i = rows -1; i > -1; i--) {
-                if(gird[i][colNumber] === '.'){
-                    gird[i][colNumber] = currentPlayer
-                    rowNumber = i
-                    break;
-                }
-            }
+            //todo add more validation
+            if(colNumber >= col) return {msg: `col doesnt exist, Player ${currentPlayer} turn`, finished, winnerPlayer }
+
+            const cellToFill = columnsNextCell[colNumber]
+            const rowNumber = cellToFill
+            // for (let i = rows -1; i > -1; i--) {
+                // if(gird[][colNumber] === '.'){
+
+                    gird[cellToFill][colNumber] = currentPlayer
+                    columnsNextCell[colNumber] = columnsNextCell[colNumber] + 1
+                    // rowNumber = i
+            //         break;
+            //     }
+            // }
             const winnerResult = winner(colNumber, rowNumber)
             if(winnerResult){
               winnerPlayer = currentPlayer
