@@ -9,7 +9,7 @@ const connectFourBuilder = (col, rows, startPlayer = 'o') => {
     //memoization next to filled cell within col
     const columnsNextCell = {}
     for (let i = 0; i < col; i++) {
-        columnsNextCell[i] = 0
+        columnsNextCell[i] = rows - 1
     }
 
     //private variables and methods
@@ -30,6 +30,7 @@ const connectFourBuilder = (col, rows, startPlayer = 'o') => {
 
     const winner = (colNumber, rowNumber) => {
       //todo better naming plus add dir
+      // with go, use go goroutines
         const rowResult =
           1 + nodeTraversal(colNumber, (col) => col -1 , rowNumber, (row) => row) + nodeTraversal(colNumber, (col) => col +1, rowNumber, (row) => row)
         const colResult =
@@ -47,14 +48,13 @@ const connectFourBuilder = (col, rows, startPlayer = 'o') => {
             if(finished) return {msg: `Game finished and player ${winnerPlayer} already won`, finished, winnerPlayer}
             //todo add more validation
             if(colNumber >= col) return {msg: `col doesnt exist, Player ${currentPlayer} turn`, finished, winnerPlayer }
-
             const cellToFill = columnsNextCell[colNumber]
             const rowNumber = cellToFill
             // for (let i = rows -1; i > -1; i--) {
-                // if(gird[][colNumber] === '.'){
+                // if(gird[i][colNumber] === '.'){
 
                     gird[cellToFill][colNumber] = currentPlayer
-                    columnsNextCell[colNumber] = columnsNextCell[colNumber] + 1
+                    columnsNextCell[colNumber] = columnsNextCell[colNumber] - 1
                     // rowNumber = i
             //         break;
             //     }
@@ -73,7 +73,7 @@ const connectFourBuilder = (col, rows, startPlayer = 'o') => {
     }
 }
 
-//testing
+//testing todo add assert
 const connectFour = connectFourBuilder(6, 7)
 connectFour.add(0)
 connectFour.add(1)
@@ -95,20 +95,26 @@ connectFour.add(2)
 connectFour.add(3)
 connectFour.add(4)
 const resOne = connectFour.add(5)
+//resOne =>>>> {"msg":"Player o turn","finished":false}
 console.log(`resOne =>>>> ${JSON.stringify(resOne)}`)
 const resTwo = connectFour.add(6)
+//resTwo =>>>> {"msg":"col doesnt exist, Player o turn","finished":false}
 console.log(`resTwo =>>>> ${JSON.stringify(resTwo)}`)
 const resThree = connectFour.add(0)
+//resThree =>>>> {"msg":"Player o is winner","finished":true,"winnerPlayer":"o"}
 console.log(`resThree =>>>> ${JSON.stringify(resThree)}`)
 connectFour.add(1)
 connectFour.add(2)
 connectFour.add(3)
 connectFour.add(4)
 const resFour = connectFour.add(5)
+//resFour =>>>> {"msg":"Game finished and player o already won","finished":true,"winnerPlayer":"o"}
 console.log(`resFour =>>>> ${JSON.stringify(resFour)}`)
 connectFour.add(6)
 const resFive = connectFour.add(6)
+//resFive =>>>> {"msg":"Game finished and player o already won","finished":true,"winnerPlayer":"o"}
 console.log(`resFive =>>>> ${JSON.stringify(resFive)}`)
 const resSix = connectFour.add(1)
+//resSix =>>>> {"msg":"Game finished and player o already won","finished":true,"winnerPlayer":"o"}
 console.log(`resSix =>>>> ${JSON.stringify(resSix)}`)
 
